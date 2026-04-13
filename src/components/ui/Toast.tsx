@@ -24,11 +24,16 @@ export function ToastViewport({
   onDismiss: (id: string) => void;
 }) {
   return createPortal(
-    <div className="pointer-events-none fixed inset-x-0 top-4 z-[60] flex justify-center px-4">
+    <div
+      aria-live="polite"
+      aria-atomic="true"
+      className="pointer-events-none fixed inset-x-0 top-4 z-[60] flex justify-center px-4"
+    >
       <div className="flex w-full max-w-md flex-col gap-3">
         {toasts.map((toast) => (
           <div
             key={toast.id}
+            role={toast.tone === 'danger' ? 'alert' : 'status'}
             className={cx(
               'pointer-events-auto rounded-[var(--radius-lg)] border bg-[var(--surface)] p-4 shadow-[var(--shadow-lg)]',
               toneClasses[toast.tone ?? 'neutral'],

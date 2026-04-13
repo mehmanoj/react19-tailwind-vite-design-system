@@ -1,8 +1,7 @@
-node_modules
-dist
-storybook-static
 coverage
+storybook-static
 playwright-report
 test-results
+dist
+node_modules
 lhci-results
-.DS_Store

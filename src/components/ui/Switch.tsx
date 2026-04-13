@@ -4,22 +4,26 @@ type SwitchProps = {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   label?: string;
+  'aria-label'?: string;
 };
 
 export function Switch({
   checked,
   onCheckedChange,
   label,
+  'aria-label': ariaLabel,
 }: SwitchProps) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={checked}
+      aria-label={ariaLabel}
       onClick={() => onCheckedChange(!checked)}
       className="inline-flex items-center gap-3"
     >
       <span
+        aria-hidden="true"
         className={cx(
           'relative inline-flex h-7 w-12 rounded-full transition',
           checked ? 'bg-brand-600' : 'bg-slate-300 dark:bg-slate-700',

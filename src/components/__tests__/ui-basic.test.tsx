@@ -36,6 +36,7 @@ describe('basic ui components', () => {
       'aria-expanded',
       'true',
     );
+    expect(screen.getByRole('region', { name: 'First' })).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /First/ }));
     expect(screen.queryByText('First content')).not.toBeInTheDocument();
@@ -47,7 +48,6 @@ describe('basic ui components', () => {
       'true',
     );
   });
-
 
   it('renders an empty accordion without crashing', () => {
     render(<Accordion items={[]} />);
@@ -65,9 +65,7 @@ describe('basic ui components', () => {
     expect(alert).toHaveClass('extra');
     expect(screen.getByText('Helpful details')).toBeInTheDocument();
 
-    rerender(
-      <Alert title="Error" description="Something failed" tone="danger" />,
-    );
+    rerender(<Alert title="Error" description="Something failed" tone="danger" />);
 
     expect(screen.getByText('Error').closest('div')).toHaveClass('border-red-200');
   });
@@ -78,13 +76,7 @@ describe('basic ui components', () => {
     expect(screen.getByLabelText('Jane Doe')).toHaveTextContent('JD');
     expect(screen.getByLabelText('Jane Doe')).toHaveClass('h-9', 'avatar');
 
-    rerender(
-      <Avatar
-        name="Jane Doe"
-        src="/avatar.png"
-        size="lg"
-      />,
-    );
+    rerender(<Avatar name="Jane Doe" src="/avatar.png" size="lg" />);
 
     expect(screen.getByRole('img', { name: 'Jane Doe' })).toHaveAttribute(
       'src',
@@ -116,18 +108,15 @@ describe('basic ui components', () => {
       'href',
       '/library',
     );
-    expect(screen.getByText('Current')).toHaveClass('font-medium');
+    expect(screen.getByText('Current')).toHaveAttribute('aria-current', 'page');
 
     rerender(
       <Breadcrumbs
-        items={[
-          { label: 'Parent without link' },
-          { label: 'Only item', href: '/only' },
-        ]}
+        items={[{ label: 'Parent without link' }, { label: 'Only item', href: '/only' }]}
       />,
     );
     expect(screen.getByText('Parent without link')).not.toHaveAttribute('href');
-    expect(screen.getByText('Parent without link')).not.toHaveClass('font-medium');
+    expect(screen.getByText('Parent without link')).not.toHaveAttribute('aria-current');
     expect(screen.getByText('Only item')).not.toHaveAttribute('href');
   });
 
@@ -159,7 +148,10 @@ describe('basic ui components', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
 
     rerender(<Button>Plain button</Button>);
-    expect(screen.getByRole('button', { name: 'Plain button' })).toHaveAttribute('type', 'button');
+    expect(screen.getByRole('button', { name: 'Plain button' })).toHaveAttribute(
+      'type',
+      'button',
+    );
     expect(screen.queryByText('Left')).not.toBeInTheDocument();
     expect(screen.queryByText('Right')).not.toBeInTheDocument();
   });
@@ -184,7 +176,12 @@ describe('basic ui components', () => {
 
     rerender(
       <>
-        <StatCard label="Users" value="1,024" hint="Up this month" trend={<span>+8%</span>} />
+        <StatCard
+          label="Users"
+          value="1,024"
+          hint="Up this month"
+          trend={<span>+8%</span>}
+        />
         <StatCard label="Latency" value="82ms" hint="Stable" />
       </>,
     );

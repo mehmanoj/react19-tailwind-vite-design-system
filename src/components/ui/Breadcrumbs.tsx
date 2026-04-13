@@ -17,7 +17,10 @@ export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
                   {item.label}
                 </a>
               ) : (
-                <span className={isLast ? 'font-medium text-[var(--text)]' : ''}>
+                <span
+                  aria-current={isLast ? 'page' : undefined}
+                  className={isLast ? 'font-medium text-[var(--text)]' : ''}
+                >
                   {item.label}
                 </span>
               )}

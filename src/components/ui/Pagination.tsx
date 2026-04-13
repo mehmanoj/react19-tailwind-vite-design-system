@@ -7,13 +7,9 @@ type PaginationProps = {
   onPageChange: (page: number) => void;
 };
 
-export function Pagination({
-  page,
-  pageCount,
-  onPageChange,
-}: PaginationProps) {
+export function Pagination({ page, pageCount, onPageChange }: PaginationProps) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <nav aria-label="Pagination" className="flex flex-wrap items-center gap-2">
       <Button
         variant="outline"
         size="sm"
@@ -28,6 +24,8 @@ export function Pagination({
           key={pageNumber}
           type="button"
           onClick={() => onPageChange(pageNumber)}
+          aria-current={pageNumber === page ? 'page' : undefined}
+          aria-label={`Page ${pageNumber}`}
           className={cx(
             'h-9 w-9 rounded-[var(--radius-md)] border text-sm font-medium transition',
             pageNumber === page
@@ -47,6 +45,6 @@ export function Pagination({
       >
         Next
       </Button>
-    </div>
+    </nav>
   );
 }

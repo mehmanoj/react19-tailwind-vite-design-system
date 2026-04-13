@@ -14,7 +14,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
         <p className="px-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-subtle)]">
           Sections
         </p>
-        <nav className="mt-3 flex flex-col gap-1">
+        <nav aria-label="Section navigation" className="mt-3 flex flex-col gap-1">
           {items.map((item) => (
             <a
               key={item.id}

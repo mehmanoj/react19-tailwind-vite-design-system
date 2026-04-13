@@ -18,13 +18,18 @@ function FormDemo() {
     <div className="grid gap-6 rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-sm)] lg:grid-cols-2">
       <div className="space-y-4">
         <div>
-          <label className="mb-2 block text-sm font-medium">Project name</label>
-          <Input placeholder="Checkout redesign" />
+          <label htmlFor="story-project-name" className="mb-2 block text-sm font-medium">
+            Project name
+          </label>
+          <Input id="story-project-name" placeholder="Checkout redesign" />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">Environment</label>
+          <label htmlFor="story-environment" className="mb-2 block text-sm font-medium">
+            Environment
+          </label>
           <Select
+            id="story-environment"
             value={environment}
             onChange={(event) => setEnvironment(event.target.value)}
             options={[
@@ -36,20 +41,38 @@ function FormDemo() {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">Release notes</label>
-          <Textarea placeholder="Summarize changes, risks, and rollback notes." />
+          <label htmlFor="story-release-notes" className="mb-2 block text-sm font-medium">
+            Release notes
+          </label>
+          <Textarea
+            id="story-release-notes"
+            placeholder="Summarize changes, risks, and rollback notes."
+          />
         </div>
       </div>
 
       <div className="space-y-4">
         <RadioGroup
+          legend="Announcement channel"
           name="channel"
           value={channel}
           onChange={setChannel}
           options={[
-            { label: 'Email', value: 'email', description: 'Best for scheduled rollouts.' },
-            { label: 'Slack', value: 'slack', description: 'Best for team coordination.' },
-            { label: 'In-product', value: 'product', description: 'Best for launch guidance.' },
+            {
+              label: 'Email',
+              value: 'email',
+              description: 'Best for scheduled rollouts.',
+            },
+            {
+              label: 'Slack',
+              value: 'slack',
+              description: 'Best for team coordination.',
+            },
+            {
+              label: 'In-product',
+              value: 'product',
+              description: 'Best for launch guidance.',
+            },
           ]}
         />
 

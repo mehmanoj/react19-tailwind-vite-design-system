@@ -1,7 +1,7 @@
 {
   "name": "react19-tailwind-vite-design-system",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -12,13 +12,27 @@
     "build-storybook": "storybook build --config-dir storybook",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:a11y": "vitest run src/accessibility/__tests__/unit-accessibility.test.tsx && playwright test e2e/accessibility.spec.ts",
+    "perf": "npm run build && lhci autorun",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "prepare": "node .husky/install.mjs"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs,cjs,json,css,md,html,yml,yaml}": "prettier --write"
   },
   "dependencies": {
     "react": "^19.2.5",
     "react-dom": "^19.2.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.56.1",
     "@storybook/addon-a11y": "^10.3.0",
     "@storybook/addon-docs": "^10.3.0",
     "@storybook/react-vite": "^10.3.0",
@@ -30,7 +44,11 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/coverage-v8": "^4.0.7",
+    "husky": "^9.1.7",
+    "jest-axe": "^10.0.0",
     "jsdom": "^27.0.1",
+    "lint-staged": "^16.2.4",
+    "prettier": "^3.6.2",
     "storybook": "^10.3.0",
     "typescript": "^6.0.2",
     "vite": "^8.0.8",

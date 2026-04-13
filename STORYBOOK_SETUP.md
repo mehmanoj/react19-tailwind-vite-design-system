@@ -15,8 +15,12 @@ npm run storybook
 npm run build-storybook
 ```
 
+## Accessibility in Storybook
+
+The project keeps `@storybook/addon-a11y` enabled so stories can be checked during component development.
+
 ## Notes
 
-- Active config directory: `storybook/`
-- Hidden fallback config also included: `.storybook/`
-- If you want to use the default Storybook folder later, change the scripts in `package.json`
+- active config directory: `storybook/`
+- hidden fallback config also included: `.storybook/`
+- if you want to use the default Storybook folder later, change the scripts in `package.json`

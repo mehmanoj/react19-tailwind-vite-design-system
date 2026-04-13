@@ -15,26 +15,44 @@ describe('overlay components', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('renders modal and handles cancel, primary action, escape and outside click', async () => {
+  it('renders modal and handles cancel, primary action, escape, tab trapping and outside click', async () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
     const onPrimary = vi.fn();
 
-    const { rerender } = render(
-      <Modal
-        open
-        title="Delete item"
-        description="This action cannot be undone"
-        onClose={onClose}
-        primaryAction={{ label: 'Delete', onClick: onPrimary }}
-      >
-        <div>Modal body</div>
-      </Modal>,
+    render(
+      <div>
+        <button type="button">Open modal</button>
+        <Modal
+          open
+          title="Delete item"
+          description="This action cannot be undone"
+          onClose={onClose}
+          primaryAction={{ label: 'Delete', onClick: onPrimary }}
+        >
+          <div>Modal body</div>
+        </Modal>
+      </div>,
     );
 
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
     expect(screen.getByText('This action cannot be undone')).toBeInTheDocument();
+    expect(dialog).toHaveAttribute(
+      'aria-describedby',
+      screen.getByText('This action cannot be undone').getAttribute('id'),
+    );
     expect(document.body.style.overflow).toBe('hidden');
+    expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus();
+
+    fireEvent.keyDown(document, { key: 'Tab' });
+    expect(screen.getByRole('button', { name: 'Delete' })).toHaveFocus();
+
+    fireEvent.keyDown(document, { key: 'Tab' });
+    expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus();
+
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(screen.getByRole('button', { name: 'Delete' })).toHaveFocus();
 
     await user.click(screen.getByRole('button', { name: 'Delete' }));
     expect(onPrimary).toHaveBeenCalledTimes(1);
@@ -50,14 +68,17 @@ describe('overlay components', () => {
 
     fireEvent.mouseDown(document.body);
     expect(onClose).toHaveBeenCalledTimes(3);
+  });
 
-    rerender(
+  it('renders modal without a description or primary action and restores body scroll on close', () => {
+    const onClose = vi.fn();
+    const { rerender } = render(
       <Modal open title="Simple modal" onClose={onClose}>
         <div>No description</div>
       </Modal>,
     );
 
-    expect(screen.queryByText('This action cannot be undone')).not.toBeInTheDocument();
+    expect(screen.getByRole('dialog')).not.toHaveAttribute('aria-describedby');
     expect(screen.queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument();
 
     rerender(
@@ -94,13 +115,18 @@ describe('overlay components', () => {
 
     render(<ToastViewport toasts={toasts} onDismiss={onDismiss} />);
 
-    const successToast = screen.getByText('Saved').parentElement?.parentElement?.parentElement;
-    const neutralToast = screen.getByText('Neutral tone').parentElement?.parentElement?.parentElement;
-    const dangerToast = screen.getByText('Failed').parentElement?.parentElement?.parentElement;
+    const successToast =
+      screen.getByText('Saved').parentElement?.parentElement?.parentElement;
+    const neutralToast =
+      screen.getByText('Neutral tone').parentElement?.parentElement?.parentElement;
+    const dangerToast =
+      screen.getByText('Failed').parentElement?.parentElement?.parentElement;
 
     expect(successToast).toHaveClass('border-emerald-300');
     expect(neutralToast).toHaveClass('border-slate-200');
     expect(dangerToast).toHaveClass('border-red-300');
+    expect(screen.getAllByRole('status')).toHaveLength(2);
+    expect(screen.getByRole('alert')).toBeInTheDocument();
 
     await user.click(screen.getAllByRole('button', { name: 'Dismiss' })[1]);
     expect(onDismiss).toHaveBeenCalledWith('2');
@@ -127,9 +153,11 @@ describe('overlay components', () => {
 
     expect(screen.getByRole('tooltip')).toHaveTextContent('Tooltip content');
     expect(screen.getByRole('tooltip')).toHaveClass('top-11');
+    expect(trigger).toHaveAttribute('aria-describedby', screen.getByRole('tooltip').id);
 
     fireEvent.mouseLeave(wrapper!);
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    expect(trigger).not.toHaveAttribute('aria-describedby');
 
     rerender(
       <Tooltip content="Another tooltip">
@@ -152,10 +180,10 @@ describe('overlay components', () => {
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
-  it('keeps tooltip hidden when it is hidden before the delay elapses', () => {
+  it('keeps tooltip hidden when it is hidden before the delay elapses and clears timers on unmount', () => {
     vi.useFakeTimers();
 
-    render(
+    const { unmount } = render(
       <Tooltip content="Delayed tooltip">
         <button type="button">Quick trigger</button>
       </Tooltip>,
@@ -170,6 +198,7 @@ describe('overlay components', () => {
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
 
     fireEvent.mouseEnter(wrapper!);
+    fireEvent.mouseEnter(wrapper!);
     fireEvent.mouseLeave(wrapper!);
 
     act(() => {
@@ -177,5 +206,7 @@ describe('overlay components', () => {
     });
 
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+
+    unmount();
   });
 });

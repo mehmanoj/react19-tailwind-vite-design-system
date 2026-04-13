@@ -1,5 +1,5 @@
 import { createRef } from 'react';
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Checkbox } from '../ui/Checkbox';
 import { Input } from '../ui/Input';
@@ -25,18 +25,16 @@ describe('form and data display components', () => {
     );
 
     const checkbox = screen.getByRole('checkbox', { name: /Email alerts/i });
-    expect(screen.getByText('Receive product updates')).toBeInTheDocument();
+    expect(screen.getByText('Receive product updates')).toHaveAttribute('id');
+    expect(checkbox).toHaveAttribute(
+      'aria-describedby',
+      screen.getByText('Receive product updates').getAttribute('id'),
+    );
+
     await user.click(checkbox);
     expect(onChange).toHaveBeenCalledWith(true);
 
-    rerender(
-      <Checkbox
-        label="SMS alerts"
-        checked
-        onChange={onChange}
-        disabled
-      />,
-    );
+    rerender(<Checkbox label="SMS alerts" checked onChange={onChange} disabled />);
 
     expect(screen.getByRole('checkbox', { name: /SMS alerts/i })).toBeDisabled();
     expect(screen.getByText('SMS alerts').closest('label')).toHaveClass('opacity-60');
@@ -66,10 +64,15 @@ describe('form and data display components', () => {
       <Pagination page={1} pageCount={3} onPageChange={onPageChange} />,
     );
 
+    expect(screen.getByRole('navigation', { name: 'Pagination' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Previous' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: '1' })).toHaveClass('bg-brand-600');
+    expect(screen.getByRole('button', { name: 'Page 1' })).toHaveClass('bg-brand-600');
+    expect(screen.getByRole('button', { name: 'Page 1' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
 
-    await user.click(screen.getByRole('button', { name: '2' }));
+    await user.click(screen.getByRole('button', { name: 'Page 2' }));
     expect(onPageChange).toHaveBeenCalledWith(2);
 
     await user.click(screen.getByRole('button', { name: 'Next' }));
@@ -82,12 +85,12 @@ describe('form and data display components', () => {
     expect(onPageChange).toHaveBeenCalledWith(2);
   });
 
-  it('supports radio group selection states', async () => {
+  it('supports radio group selection states with and without a legend', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-
-    render(
+    const { rerender } = render(
       <RadioGroup
+        legend="Plan"
         name="plan"
         value="pro"
         onChange={onChange}
@@ -101,12 +104,27 @@ describe('form and data display components', () => {
     const pro = screen.getByRole('radio', { name: /Pro/ });
     const starter = screen.getByRole('radio', { name: /Starter/ });
 
+    expect(screen.getByText('Plan').tagName).toBe('LEGEND');
     expect(pro).toBeChecked();
-    expect(screen.getByText('Basic plan')).toBeInTheDocument();
+    expect(screen.getByText('Basic plan')).toHaveAttribute('id');
+    expect(starter).toHaveAttribute(
+      'aria-describedby',
+      screen.getByText('Basic plan').getAttribute('id'),
+    );
     expect(screen.getByText('Pro').closest('label')).toHaveClass('border-brand-500');
 
     await user.click(starter);
     expect(onChange).toHaveBeenCalledWith('starter');
+
+    rerender(
+      <RadioGroup
+        name="plan"
+        value="starter"
+        onChange={onChange}
+        options={[{ label: 'Starter', value: 'starter' }]}
+      />,
+    );
+    expect(screen.queryByText('Plan')).not.toBeInTheDocument();
   });
 
   it('supports controlled and uncontrolled select usage', async () => {
@@ -140,7 +158,7 @@ describe('form and data display components', () => {
     expect(screen.getByRole('combobox', { name: 'Empty select' })).toHaveValue('one');
   });
 
-  it('toggles switch state and optional label', async () => {
+  it('toggles switch state and supports a standalone aria-label', async () => {
     const user = userEvent.setup();
     const onCheckedChange = vi.fn();
     const { rerender } = render(
@@ -152,8 +170,13 @@ describe('form and data display components', () => {
     await user.click(switchButton);
     expect(onCheckedChange).toHaveBeenCalledWith(true);
 
-    rerender(<Switch checked onCheckedChange={onCheckedChange} />);
-    expect(screen.getByRole('switch')).toHaveAttribute('aria-checked', 'true');
+    rerender(
+      <Switch checked onCheckedChange={onCheckedChange} aria-label="Standalone switch" />,
+    );
+    expect(screen.getByRole('switch', { name: 'Standalone switch' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
     expect(screen.queryByText('Dark mode')).not.toBeInTheDocument();
   });
 
@@ -179,27 +202,74 @@ describe('form and data display components', () => {
     expect(within(rows[2]).getByText('20')).toHaveClass('text-right');
   });
 
-  it('renders tabs with explicit default and fallback first tab', async () => {
+  it('renders tabs with explicit default and fallback first tab and supports keyboard navigation', async () => {
     const user = userEvent.setup();
     const tabs = [
       { id: 'overview', label: 'Overview', content: <div>Overview panel</div> },
       { id: 'usage', label: 'Usage', content: <div>Usage panel</div> },
     ];
 
-    const { unmount } = render(<Tabs tabs={tabs} defaultTab="usage" />);
-    expect(screen.getByText('Usage panel')).toBeInTheDocument();
+    const { rerender, unmount } = render(<Tabs tabs={tabs} defaultTab="usage" />);
+    expect(screen.getByRole('tab', { name: 'Usage' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(screen.getByRole('tabpanel')).toHaveTextContent('Usage panel');
 
-    await user.click(screen.getByRole('button', { name: 'Overview' }));
-    expect(screen.getByText('Overview panel')).toBeInTheDocument();
+    await user.click(screen.getByRole('tab', { name: 'Overview' }));
+    expect(screen.getByRole('tabpanel')).toHaveTextContent('Overview panel');
+
+    fireEvent.keyDown(screen.getByRole('tab', { name: 'Overview' }), {
+      key: 'ArrowRight',
+    });
+    expect(screen.getByRole('tab', { name: 'Usage' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+
+    fireEvent.keyDown(screen.getByRole('tab', { name: 'Usage' }), { key: 'ArrowLeft' });
+    expect(screen.getByRole('tab', { name: 'Overview' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+
+    fireEvent.keyDown(screen.getByRole('tab', { name: 'Overview' }), {
+      key: 'ArrowDown',
+    });
+    expect(screen.getByRole('tab', { name: 'Usage' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+
+    fireEvent.keyDown(screen.getByRole('tab', { name: 'Usage' }), { key: 'ArrowUp' });
+    expect(screen.getByRole('tab', { name: 'Overview' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+
+    fireEvent.keyDown(screen.getByRole('tab', { name: 'Overview' }), { key: 'End' });
+    expect(screen.getByRole('tab', { name: 'Usage' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+
+    fireEvent.keyDown(screen.getByRole('tab', { name: 'Usage' }), { key: 'Home' });
+    expect(screen.getByRole('tab', { name: 'Overview' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+
+    fireEvent.keyDown(screen.getByRole('tab', { name: 'Overview' }), { key: 'Enter' });
+    expect(screen.getByRole('tab', { name: 'Overview' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+
+    rerender(<Tabs tabs={tabs} />);
+    expect(screen.getByRole('tabpanel')).toHaveTextContent('Overview panel');
 
     unmount();
-    render(<Tabs tabs={tabs} />);
-    expect(screen.getByText('Overview panel')).toBeInTheDocument();
-  });
-
-  it('renders empty tabs when no items are supplied', () => {
     render(<Tabs tabs={[]} />);
-
-    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    expect(screen.queryByRole('tab')).not.toBeInTheDocument();
   });
 });

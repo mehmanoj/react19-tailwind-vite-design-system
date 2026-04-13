@@ -70,9 +70,18 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--text)]">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[var(--radius-md)] focus:bg-[var(--surface)] focus:px-4 focus:py-2 focus:text-[var(--text)] focus:shadow-[var(--shadow-md)]"
+      >
+        Skip to main content
+      </a>
       <TopBar />
 
-      <main className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-8 xl:grid-cols-[250px_minmax(0,1fr)]">
+      <main
+        id="main-content"
+        className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-8 xl:grid-cols-[250px_minmax(0,1fr)]"
+      >
         <SidebarNav items={navItems} />
 
         <div className="space-y-14">
@@ -92,9 +101,9 @@ export function App() {
                         Dashboard shell built from the same primitives
                       </CardTitle>
                       <CardDescription className="mt-2 max-w-2xl">
-                        A healthy design system is not just a bag of buttons. It
-                        should compose into real product experiences with clear
-                        hierarchy, consistent spacing, and a themeable visual language.
+                        A healthy design system is not just a bag of buttons. It should
+                        compose into real product experiences with clear hierarchy,
+                        consistent spacing, and a themeable visual language.
                       </CardDescription>
                     </div>
 
@@ -128,7 +137,9 @@ export function App() {
                     <div className="rounded-[var(--radius-xl)] border border-[var(--border)] p-5">
                       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                         <div>
-                          <h3 className="text-lg font-semibold">Recent system activity</h3>
+                          <h3 className="text-lg font-semibold">
+                            Recent system activity
+                          </h3>
                           <p className="text-sm text-[var(--text-muted)]">
                             Example table, badges, and action buttons.
                           </p>
@@ -137,7 +148,8 @@ export function App() {
                           onClick={() =>
                             showToast({
                               title: 'Starter action fired',
-                              description: 'Wire this into your own analytics, API, or workflow.',
+                              description:
+                                'Wire this into your own analytics, API, or workflow.',
                               tone: 'success',
                             })
                           }
@@ -161,7 +173,8 @@ export function App() {
                       <CardHeader>
                         <CardTitle>Starter guidance</CardTitle>
                         <CardDescription>
-                          These defaults keep the system extensible without becoming heavy.
+                          These defaults keep the system extensible without becoming
+                          heavy.
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-3">
@@ -217,7 +230,8 @@ export function App() {
                 <CardHeader>
                   <CardTitle>Color tokens</CardTitle>
                   <CardDescription>
-                    Keep primitive color values in one place, then map them to semantic roles.
+                    Keep primitive color values in one place, then map them to semantic
+                    roles.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -233,7 +247,9 @@ export function App() {
                         />
                         <div className="mt-3">
                           <p className="font-medium">{token.name}</p>
-                          <p className="text-sm text-[var(--text-muted)]">{token.value}</p>
+                          <p className="text-sm text-[var(--text-muted)]">
+                            {token.value}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -263,7 +279,9 @@ export function App() {
                             />
                             <div>
                               <p className="font-medium">{token.name}</p>
-                              <p className="text-sm text-[var(--text-muted)]">{token.value}</p>
+                              <p className="text-sm text-[var(--text-muted)]">
+                                {token.value}
+                              </p>
                             </div>
                           </div>
                         ))}
@@ -283,7 +301,9 @@ export function App() {
                             />
                             <div>
                               <p className="font-medium">{token.name}</p>
-                              <p className="text-sm text-[var(--text-muted)]">{token.value}</p>
+                              <p className="text-sm text-[var(--text-muted)]">
+                                {token.value}
+                              </p>
                             </div>
                           </div>
                         ))}
@@ -302,7 +322,9 @@ export function App() {
                             style={{ boxShadow: token.value }}
                           >
                             <p className="font-medium">{token.name}</p>
-                            <p className="mt-2 text-sm text-[var(--text-muted)]">{token.value}</p>
+                            <p className="mt-2 text-sm text-[var(--text-muted)]">
+                              {token.value}
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -319,20 +341,34 @@ export function App() {
                   </CardHeader>
                   <CardContent className="space-y-5">
                     {typographyScale.map((token, index) => (
-                      <div key={token.name} className="rounded-[var(--radius-lg)] border border-[var(--border)] p-4">
+                      <div
+                        key={token.name}
+                        className="rounded-[var(--radius-lg)] border border-[var(--border)] p-4"
+                      >
                         <p className="text-sm uppercase tracking-[0.2em] text-[var(--text-subtle)]">
                           {token.name}
                         </p>
                         <p
                           className="mt-2 font-semibold text-[var(--text)]"
                           style={{
-                            fontSize: ['3rem', '2.25rem', '1.75rem', '1.25rem', '1rem', '0.875rem'][index],
-                            lineHeight: ['1.05', '1.1', '1.15', '1.25', '1.65', '1.5'][index],
+                            fontSize: [
+                              '3rem',
+                              '2.25rem',
+                              '1.75rem',
+                              '1.25rem',
+                              '1rem',
+                              '0.875rem',
+                            ][index],
+                            lineHeight: ['1.05', '1.1', '1.15', '1.25', '1.65', '1.5'][
+                              index
+                            ],
                           }}
                         >
                           The quick brown fox jumps over the lazy dog
                         </p>
-                        <p className="mt-2 text-sm text-[var(--text-muted)]">{token.value}</p>
+                        <p className="mt-2 text-sm text-[var(--text-muted)]">
+                          {token.value}
+                        </p>
                       </div>
                     ))}
                   </CardContent>
@@ -390,7 +426,8 @@ export function App() {
                   <CardHeader>
                     <CardTitle>Stat cards</CardTitle>
                     <CardDescription>
-                      Simple metrics surfaces that align to dashboards and analytics views.
+                      Simple metrics surfaces that align to dashboards and analytics
+                      views.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="grid gap-4 md:grid-cols-2">
@@ -429,12 +466,23 @@ export function App() {
                 <CardContent className="grid gap-5">
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-[var(--text)]">Project name</label>
-                      <Input placeholder="Launch readiness audit" />
+                      <label
+                        htmlFor="project-name"
+                        className="text-sm font-medium text-[var(--text)]"
+                      >
+                        Project name
+                      </label>
+                      <Input id="project-name" placeholder="Launch readiness audit" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-[var(--text)]">Environment</label>
+                      <label
+                        htmlFor="environment"
+                        className="text-sm font-medium text-[var(--text)]"
+                      >
+                        Environment
+                      </label>
                       <Select
+                        id="environment"
                         placeholder="Choose environment"
                         value={environment}
                         onChange={(event) => setEnvironment(event.target.value)}
@@ -448,8 +496,16 @@ export function App() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-[var(--text)]">Notes</label>
-                    <Textarea placeholder="Use this area for rollout notes, accessibility caveats, or migration guidance." />
+                    <label
+                      htmlFor="notes"
+                      className="text-sm font-medium text-[var(--text)]"
+                    >
+                      Notes
+                    </label>
+                    <Textarea
+                      id="notes"
+                      placeholder="Use this area for rollout notes, accessibility caveats, or migration guidance."
+                    />
                   </div>
 
                   <Checkbox
@@ -461,8 +517,8 @@ export function App() {
 
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
-                      <p className="mb-3 text-sm font-medium text-[var(--text)]">Deployment target</p>
                       <RadioGroup
+                        legend="Deployment target"
                         name="deployment-target"
                         value={deploymentTarget}
                         onChange={setDeploymentTarget}
@@ -513,7 +569,11 @@ export function App() {
                   />
                   <Alert
                     tone={marketingOptIn ? 'success' : 'warning'}
-                    title={marketingOptIn ? 'Lifecycle email is enabled' : 'Lifecycle email is off'}
+                    title={
+                      marketingOptIn
+                        ? 'Lifecycle email is enabled'
+                        : 'Lifecycle email is off'
+                    }
                     description="This shows how semantic feedback can react to form state with minimal code."
                   />
                   <div className="rounded-[var(--radius-xl)] border border-dashed border-[var(--border)] p-5">
@@ -521,7 +581,7 @@ export function App() {
                       Example snippet
                     </p>
                     <pre className="code-snippet mt-3 overflow-x-auto">
-{`<Button variant="primary">Ship</Button>
+                      {`<Button variant="primary">Ship</Button>
 <Input placeholder="Project name" />
 <Select options={envOptions} />
 <Switch checked={enabled} onCheckedChange={setEnabled} />`}
@@ -673,8 +733,8 @@ export function App() {
                         label: 'Tokens',
                         content: (
                           <p className="text-sm leading-7 text-[var(--text-muted)]">
-                            Keep raw values and semantic aliases separate so the brand can shift
-                            without breaking product code.
+                            Keep raw values and semantic aliases separate so the brand can
+                            shift without breaking product code.
                           </p>
                         ),
                       },
@@ -683,8 +743,8 @@ export function App() {
                         label: 'Components',
                         content: (
                           <p className="text-sm leading-7 text-[var(--text-muted)]">
-                            Build primitives first, then patterns, then page templates. This reduces
-                            duplication and improves adoption.
+                            Build primitives first, then patterns, then page templates.
+                            This reduces duplication and improves adoption.
                           </p>
                         ),
                       },
@@ -693,8 +753,8 @@ export function App() {
                         label: 'Governance',
                         content: (
                           <p className="text-sm leading-7 text-[var(--text-muted)]">
-                            Document contribution criteria, accessibility expectations, and ownership
-                            boundaries early.
+                            Document contribution criteria, accessibility expectations,
+                            and ownership boundaries early.
                           </p>
                         ),
                       },
@@ -716,7 +776,8 @@ export function App() {
                 <CardHeader>
                   <CardTitle>Component inventory table</CardTitle>
                   <CardDescription>
-                    Example usage for rollout dashboards or internal design system reporting.
+                    Example usage for rollout dashboards or internal design system
+                    reporting.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-5">
@@ -751,7 +812,8 @@ export function App() {
               <CardContent className="flex flex-wrap items-center gap-4">
                 <Button onClick={() => setIsModalOpen(true)}>Open modal</Button>
                 <p className="text-sm text-[var(--text-muted)]">
-                  This pattern includes an outside click handler, escape key support, and body scroll lock.
+                  This pattern includes an outside click handler, escape key support, and
+                  body scroll lock.
                 </p>
               </CardContent>
             </Card>
@@ -778,9 +840,9 @@ export function App() {
       >
         <div className="space-y-4">
           <p className="text-sm leading-7 text-[var(--text-muted)]">
-            This example is intentionally compact: a clear title, supporting text,
-            and a single primary action. Avoid overloading modals with dense workflows
-            when an inline page would serve users better.
+            This example is intentionally compact: a clear title, supporting text, and a
+            single primary action. Avoid overloading modals with dense workflows when an
+            inline page would serve users better.
           </p>
           <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-muted)] p-4">
             <p className="font-medium">Release checklist</p>
