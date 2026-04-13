@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Modal } from '../ui/Modal';
 import { ToastViewport, type ToastItem } from '../ui/Toast';
@@ -40,6 +40,9 @@ describe('overlay components', () => {
     expect(onPrimary).toHaveBeenCalledTimes(1);
 
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(onClose).toHaveBeenCalledTimes(1);
+
+    fireEvent.keyDown(document, { key: 'Enter' });
     expect(onClose).toHaveBeenCalledTimes(1);
 
     fireEvent.keyDown(document, { key: 'Escape' });
@@ -113,13 +116,19 @@ describe('overlay components', () => {
     );
 
     const trigger = screen.getByRole('button', { name: 'Trigger' });
-    fireEvent.mouseEnter(trigger);
-    vi.advanceTimersByTime(100);
+    const wrapper = trigger.closest('span');
+
+    expect(wrapper).not.toBeNull();
+
+    fireEvent.mouseEnter(wrapper!);
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
 
     expect(screen.getByRole('tooltip')).toHaveTextContent('Tooltip content');
     expect(screen.getByRole('tooltip')).toHaveClass('top-11');
 
-    fireEvent.mouseLeave(trigger);
+    fireEvent.mouseLeave(wrapper!);
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
 
     rerender(
@@ -129,11 +138,44 @@ describe('overlay components', () => {
     );
 
     const focusTrigger = screen.getByRole('button', { name: 'Focus trigger' });
-    fireEvent.focus(focusTrigger);
-    vi.advanceTimersByTime(100);
+    const focusWrapper = focusTrigger.closest('span');
+
+    expect(focusWrapper).not.toBeNull();
+
+    fireEvent.focusIn(focusWrapper!);
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
     expect(screen.getByRole('tooltip')).toHaveClass('-top-11');
 
-    fireEvent.blur(focusTrigger);
+    fireEvent.blur(focusWrapper!);
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('keeps tooltip hidden when it is hidden before the delay elapses', () => {
+    vi.useFakeTimers();
+
+    render(
+      <Tooltip content="Delayed tooltip">
+        <button type="button">Quick trigger</button>
+      </Tooltip>,
+    );
+
+    const quickTrigger = screen.getByRole('button', { name: 'Quick trigger' });
+    const wrapper = quickTrigger.closest('span');
+
+    expect(wrapper).not.toBeNull();
+
+    fireEvent.mouseLeave(wrapper!);
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+
+    fireEvent.mouseEnter(wrapper!);
+    fireEvent.mouseLeave(wrapper!);
+
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 });

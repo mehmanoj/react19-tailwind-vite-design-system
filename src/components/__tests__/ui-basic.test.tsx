@@ -118,7 +118,16 @@ describe('basic ui components', () => {
     );
     expect(screen.getByText('Current')).toHaveClass('font-medium');
 
-    rerender(<Breadcrumbs items={[{ label: 'Only item', href: '/only' }]} />);
+    rerender(
+      <Breadcrumbs
+        items={[
+          { label: 'Parent without link' },
+          { label: 'Only item', href: '/only' },
+        ]}
+      />,
+    );
+    expect(screen.getByText('Parent without link')).not.toHaveAttribute('href');
+    expect(screen.getByText('Parent without link')).not.toHaveClass('font-medium');
     expect(screen.getByText('Only item')).not.toHaveAttribute('href');
   });
 

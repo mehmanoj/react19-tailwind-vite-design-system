@@ -1,5 +1,4 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { ToastProvider, useToast } from '../ToastContext';
 
 function ToastConsumer() {
@@ -36,9 +35,8 @@ function ToastConsumer() {
 }
 
 describe('ToastContext', () => {
-  it('shows default and custom toasts and dismisses them manually and automatically', async () => {
+  it('shows default and custom toasts and dismisses them manually and automatically', () => {
     vi.useFakeTimers();
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
     render(
       <ToastProvider>
@@ -46,20 +44,22 @@ describe('ToastContext', () => {
       </ToastProvider>,
     );
 
-    await user.click(screen.getByRole('button', { name: 'Show default toast' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Show default toast' }));
     expect(screen.getByText('Saved')).toBeInTheDocument();
     const defaultToast = screen.getByText('Default toast').parentElement?.parentElement?.parentElement;
     expect(defaultToast).toHaveClass('border-slate-200');
 
-    await user.click(screen.getByRole('button', { name: 'Dismiss' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
     expect(screen.queryByText('Saved')).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Show custom toast' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Show custom toast' }));
     expect(screen.getByText('Custom')).toBeInTheDocument();
     const customToast = screen.getByText('Custom toast').parentElement?.parentElement?.parentElement;
     expect(customToast).toHaveClass('border-red-300');
 
-    vi.advanceTimersByTime(1000);
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
     expect(screen.queryByText('Custom')).not.toBeInTheDocument();
   });
 

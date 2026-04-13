@@ -42,8 +42,9 @@ describe('ThemeContext', () => {
   });
 
 
-  it('reads a saved dark theme directly from localStorage', () => {
+  it('reads a saved dark theme directly from localStorage and can toggle back to light', async () => {
     window.localStorage.setItem('design-system-theme', 'dark');
+    const user = userEvent.setup();
 
     render(
       <ThemeProvider>
@@ -53,6 +54,11 @@ describe('ThemeContext', () => {
 
     expect(screen.getByText('dark')).toBeInTheDocument();
     expect(document.documentElement).toHaveClass('dark');
+
+    await user.click(screen.getByRole('button', { name: 'Toggle theme' }));
+    expect(screen.getByText('light')).toBeInTheDocument();
+    expect(document.documentElement).not.toHaveClass('dark');
+    expect(window.localStorage.getItem('design-system-theme')).toBe('light');
   });
 
   it('falls back to system preference when localStorage has no saved theme', () => {
